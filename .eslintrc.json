@@ -1,3 +1,69 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 2022,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"jsx": true
+		}
+	},
+	"plugins": ["@typescript-eslint", "react", "jsx-a11y", "import", "prettier"],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:import/typescript",
+		"plugin:react/recommended",
+		"plugin:jsx-a11y/recommended",
+		"plugin:import/errors",
+		"plugin:import/warnings",
+		"plugin:prettier/recommended",
+		"next/core-web-vitals"
+	],
+	"rules": {
+		// General ESLint rules
+		"no-console": "warn", // Disallows console
+		"no-unused-vars": "off", // Disables unused vars
+		"no-var": "error", // Disallows var
+		"prefer-const": "error", // Enforces const when variable is not reassigned
+		"eqeqeq": ["error", "always"], // Enforces === and !==
+
+		// TypeScript-specific rules
+		"@typescript-eslint/explicit-function-return-type": "warn", // Enforces explicit return types on functions
+		"@typescript-eslint/no-empty-function": "warn", // Disallows empty functions
+		"@typescript-eslint/no-unused-expressions": "error", // Disallows unused expressions
+		"@typescript-eslint/no-unused-vars": "error", // Disallows unused variables
+		"@typescript-eslint/no-explicit-any": "off", // Disallows any type
+		"@typescript-eslint/consistent-type-imports": "error", // Enforces consistent type imports
+		"@typescript-eslint/no-use-before-define": "error", // Disallows use before define
+		"@typescript-eslint/array-type": ["error", { "default": "array-simple" }], // Enforces the usage of `T[]` for arrays
+		"@typescript-eslint/no-inferrable-types": "error", // Disallows inferrable types
+
+		// React-specific rules
+		"react/react-in-jsx-scope": "off", // Disables react in jsx scope
+		"react/prop-types": "off", // Disables prop-types
+		"react/jsx-key": "error", // Enforces key prop on all JSX elements
+		"react/jsx-no-target-blank": "error", // Disallows target="_blank" on links
+		"react/self-closing-comp": "error", // Forces self-closing tags
+
+		// Accessibility rules
+		"jsx-a11y/alt-text": "warn", // Enforces alt text on images
+		"jsx-a11y/anchor-is-valid": [
+			"error",
+			{
+				"components": ["Link"],
+				"specialLink": ["hrefLeft", "hrefRight"],
+				"aspects": ["noHref", "invalidHref", "preferButton"]
+			}
+		], // Enforces valid anchor tags
+		"jsx-a11y/label-has-associated-control": "error", // Enforces label association
+		"jsx-a11y/no-redundant-roles": "error", // Disallows redundant roles
+
+		// Import rules
+		"import/no-unresolved": "error", // Disallows unresolved imports
+		"import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/test.tsx", "**/test.ts"] }], // Disallows unnecessary dependencies
+
+		// Prettier rules
+		"prettier/prettier": ["error", { "endOfLine": "auto" }] // Enforces prettier formatting
+	},
+	"ignorePatterns": ["node_modules", ".next"]
 }
