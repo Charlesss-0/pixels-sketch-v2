@@ -5,12 +5,12 @@ import { useEffect, useRef, useState } from 'react'
 export default function Canvas(): React.ReactNode {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const [isDrawing, setIsDrawing] = useState(false)
-	const pixelSize = 50
 
 	useEffect(() => {
 		const canvas = canvasRef.current
 		if (!canvas) return
 
+		const pixelSize = 50
 		const ctx = canvas.getContext('2d')
 		if (!ctx) return
 
@@ -60,7 +60,7 @@ export default function Canvas(): React.ReactNode {
 			canvas.removeEventListener('mouseup', handleMouseUp)
 			canvas.removeEventListener('mouseleave', handleMouseUp)
 		}
-	}, [isDrawing, pixelSize])
+	}, [isDrawing])
 
 	return <canvas ref={canvasRef} width={800} height={800} className="bg-white" />
 }

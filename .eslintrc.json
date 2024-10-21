@@ -34,7 +34,6 @@
 		"@typescript-eslint/no-unused-vars": "error", // Disallows unused variables
 		"@typescript-eslint/no-explicit-any": "off", // Disallows any type
 		"@typescript-eslint/consistent-type-imports": "error", // Enforces consistent type imports
-		"@typescript-eslint/no-use-before-define": "error", // Disallows use before define
 		"@typescript-eslint/array-type": ["error", { "default": "array-simple" }], // Enforces the usage of `T[]` for arrays
 		"@typescript-eslint/no-inferrable-types": "error", // Disallows inferrable types
 

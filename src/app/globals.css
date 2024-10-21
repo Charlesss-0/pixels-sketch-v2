@@ -86,3 +86,9 @@ input[type='color']::-webkit-color-swatch {
 input[type='color']::-moz-color-swatch {
 	@apply swatch-color-none;
 }
+
+@layer base {
+	:root {
+		--radius: 0.5rem;
+	}
+}
