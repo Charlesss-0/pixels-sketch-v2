@@ -18,7 +18,7 @@ export default function ToolSelector(): React.ReactNode {
 
 	return (
 		<div className="flex flex-col gap-4 p-5">
-			<span>Pen</span>
+			<span>Pen Tool</span>
 
 			<div className="flex items-center justify-between gap-3">
 				{toolNames.map((toolName, index) => (

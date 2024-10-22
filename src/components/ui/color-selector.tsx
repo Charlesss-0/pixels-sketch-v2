@@ -1,21 +1,18 @@
-import { Button } from './button'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
-export default function ColorSelector({
-	color,
-	setColor,
-}: {
-	color: string
-	setColor: (color: string) => void
-}): React.ReactNode {
-	const presetColors = useMemo(() => ['F1DCA7', '2A6F97', 'FDE2E4'], [])
+import { Button } from './button'
+import { twMerge } from '@/utils/tw-merge'
+
+export default function ColorSelector(): React.ReactNode {
+	const [color, setColor] = useState('efefef')
+	const presetColors = useMemo(() => ['f1dca7', '2a6f97', 'fde2e4'] as const, [])
 
 	return (
 		<div className="flex flex-col gap-4 p-5">
 			<span>Color</span>
 
-			<div className="flex items-center gap-3 w-full border rounded-[5px] border-neutral-600 bg-dark-900 select-text h-[30px]">
-				<div className="flex items-center w-full gap-3 p-1">
+			<div className="flex items-center w-full border rounded-md border-neutral-600 bg-dark-900 p-1">
+				<div className="flex items-center w-full flex-1">
 					<input
 						type="color"
 						value={`#${color}`}
@@ -23,11 +20,13 @@ export default function ColorSelector({
 						onChange={e => setColor(e.target.value)}
 					/>
 
-					<span className="text-sm font-medium">{color.toUpperCase()}</span>
-				</div>
-
-				<div className="flex items-center justify-center h-full p-1 px-3 border-l border-neutral-600">
-					<span className="font-medium text-small text-light-800">100%</span>
+					<input
+						type="text"
+						maxLength={6}
+						value={color.toUpperCase()}
+						className="text-sm font-medium w-full bg-transparent outline-none  border-white flex-1 text-center"
+						onChange={e => setColor(e.target.value)}
+					/>
 				</div>
 			</div>
 
@@ -35,7 +34,7 @@ export default function ColorSelector({
 				{presetColors.map(preset => (
 					<Button
 						key={preset}
-						className="h-[35px] w-[35px] rounded-[5px] border-2 border-neutral-600"
+						className={twMerge('h-9 w-9 rounded-md', color === preset && 'ring-2 ring-light-900')}
 						style={{ backgroundColor: `#${preset}` }}
 						onClick={() => setColor(preset)}
 					/>

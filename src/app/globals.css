@@ -2,13 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* input range styles */
 @layer components {
 	.range-track {
-		@apply h-[3px] bg-light-900 rounded-full;
+		@apply h-1  bg-light-900 rounded-full;
 	}
 
 	.range-thumb {
-		@apply mt-[-5px] h-[14px] w-[14px] rounded-full bg-dark-900;
+		@apply -mt-1.5  h-4 w-4 rounded-full bg-dark-900;
 		appearance: none;
 		border: 2px solid #f5f5f5;
 	}
@@ -18,6 +19,7 @@
 	}
 }
 
+/* Chrome, Safari, Edge, Opera */
 input[type='range']::-webkit-slider-runnable-track {
 	@apply range-track;
 }
@@ -54,6 +56,7 @@ input[type='range']:active::-ms-thumb {
 	@apply range-thumb-active;
 }
 
+/* input color swatche styles */
 @layer components {
 	.swatch-wrapper-none {
 		@apply p-0 bg-transparent;
@@ -65,12 +68,13 @@ input[type='range']:active::-ms-thumb {
 }
 
 input[type='color'] {
-	@apply h-[20px] w-[20px] rounded-[3px];
+	@apply h-5 w-5 rounded-sm;
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
 }
 
+/* Chrome, Safari, Edge, Opera */
 input[type='color']::-webkit-color-swatch-wrapper {
 	@apply swatch-wrapper-none;
 }
@@ -87,6 +91,7 @@ input[type='color']::-moz-color-swatch {
 	@apply swatch-color-none;
 }
 
+/* shadcn specific styles */
 @layer base {
 	:root {
 		--radius: 0.5rem;

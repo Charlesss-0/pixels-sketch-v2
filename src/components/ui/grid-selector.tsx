@@ -33,7 +33,7 @@ export default function GridSelector(): React.ReactNode {
 					min={16}
 					max={100}
 					className="w-full rounded-full appearance-none cursor-pointer focus:outline-none"
-					onChange={({ target: { value } }) => setRangeValue(Number(value))}
+					onChange={e => setRangeValue(Number(e.target.value))}
 				/>
 			</div>
 		</div>
