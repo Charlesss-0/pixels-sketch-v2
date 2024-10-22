@@ -34,7 +34,10 @@ export default function ColorSelector(): React.ReactNode {
 				{presetColors.map(preset => (
 					<Button
 						key={preset}
-						className={twMerge('h-9 w-9 rounded-md', color === preset && 'ring-2 ring-light-900')}
+						className={twMerge(
+							'h-9 w-9 rounded-md hover:opacity-80 transition-all duration-200',
+							color === preset && 'ring-2 ring-light-900'
+						)}
 						style={{ backgroundColor: `#${preset}` }}
 						onClick={() => setColor(preset)}
 					/>

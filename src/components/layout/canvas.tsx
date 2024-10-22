@@ -2,8 +2,13 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { Button } from '@/components/ui'
+import { SidebarToggle } from '@/components/icons'
+import { useAppStore } from '@/stores'
+
 export default function Canvas(): React.ReactNode {
 	const canvasRef = useRef<HTMLCanvasElement>(null)
+	const { isSidebarOpen, setIsSidebarOpen } = useAppStore()
 	const [isDrawing, setIsDrawing] = useState(false)
 
 	useEffect(() => {
@@ -62,5 +67,18 @@ export default function Canvas(): React.ReactNode {
 		}
 	}, [isDrawing])
 
-	return <canvas ref={canvasRef} width={800} height={800} className="bg-white" />
+	return (
+		<>
+			<Button
+				className="absolute top-3 left-3"
+				variant="ghost"
+				size="icon"
+				onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+			>
+				<SidebarToggle />
+			</Button>
+
+			<canvas ref={canvasRef} width={800} height={800} className="bg-white" />
+		</>
+	)
 }
