@@ -18,7 +18,6 @@ export default function ColorSelector({
 				<div className="flex items-center w-full gap-3 p-1">
 					<input
 						type="color"
-						defaultValue={`#${color}`}
 						value={`#${color}`}
 						className="cursor-pointer focus:outline-none"
 						onChange={e => setColor(e.target.value)}
