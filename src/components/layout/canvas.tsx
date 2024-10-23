@@ -1,18 +1,18 @@
 'use client'
 
 import { Grid, GridNone, Minus, Plus, Redo, SidebarToggle, Undo } from '@/components/icons'
+import { useCanvas, useDebounce } from '@/hooks'
 
 import { Button } from '@/components/ui'
 import { useAppStore } from '@/stores'
-import { useCanvas } from '@/hooks'
 import { useState } from 'react'
 
 export default function Canvas(): React.ReactNode {
 	const { isSidebarOpen, setIsSidebarOpen, isGridEnabled, setIsGridEnabled, fillStyle, gridSize } =
 		useAppStore()
+	const debouncedGridSize = useDebounce(gridSize, 500)
 	const [zoomValue, setZoomValue] = useState<number>(100)
-
-	const { canvasRef, gridCanvasRef } = useCanvas(isGridEnabled, gridSize, fillStyle)
+	const { canvasRef, gridCanvasRef } = useCanvas(isGridEnabled, debouncedGridSize, fillStyle)
 
 	const updateZoomValue = (value: number): void => {
 		if (value < 0 || value > 100) return
