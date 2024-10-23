@@ -1,13 +1,41 @@
 import { create } from 'zustand'
 
-type AppStore = {
+type State = {
 	isSidebarOpen: boolean
-	setIsSidebarOpen: (isSidebarOpen: boolean) => void
+	projectName: string
+	penTool: 'pen' | 'paint-bucket' | 'eraser'
+	gridSize: number
+	fillStyle: string
+	isGridEnabled: boolean
 }
 
-const useAppStore = create<AppStore>(set => ({
+type Action = {
+	setIsSidebarOpen: (isSidebarOpen: boolean) => void
+	setProjectName: (projectName: string) => void
+	setPenTool: (penTool: State['penTool']) => void
+	setGridSize: (gridSize: number) => void
+	setFillStyle: (fillStyle: string) => void
+	setIsGridEnabled: (isGridEnabled: boolean) => void
+}
+
+const useAppStore = create<State & Action>(set => ({
 	isSidebarOpen: false,
-	setIsSidebarOpen: (isSidebarOpen): void => set({ isSidebarOpen }),
+	setIsSidebarOpen: (isSidebarOpen: boolean): void => set({ isSidebarOpen }),
+
+	projectName: 'Untitled',
+	setProjectName: (projectName: string): void => set({ projectName }),
+
+	penTool: 'pen',
+	setPenTool: (penTool: State['penTool']): void => set({ penTool }),
+
+	gridSize: 16,
+	setGridSize: (gridSize: number): void => set({ gridSize }),
+
+	fillStyle: '000000',
+	setFillStyle: (fillStyle: string): void => set({ fillStyle }),
+
+	isGridEnabled: true,
+	setIsGridEnabled: (isGridEnabled: boolean): void => set({ isGridEnabled }),
 }))
 
 export default useAppStore

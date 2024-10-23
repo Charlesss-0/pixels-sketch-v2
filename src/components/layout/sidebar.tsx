@@ -7,7 +7,7 @@ import { twMerge } from '@/utils/tw-merge'
 import { useAppStore } from '@/stores'
 
 export default function Sidebar(): React.ReactNode {
-	const { isSidebarOpen, setIsSidebarOpen } = useAppStore()
+	const { isSidebarOpen, setIsSidebarOpen, projectName, setProjectName } = useAppStore()
 
 	return (
 		<aside
@@ -20,9 +20,10 @@ export default function Sidebar(): React.ReactNode {
 				<div className="flex items-center justify-between p-5">
 					<input
 						type="text"
-						defaultValue={'Untitled'}
+						defaultValue={projectName}
 						maxLength={50}
 						className="bg-transparent outline-none w-full pr-1 flex-1"
+						onChange={e => setProjectName(e.target.value)}
 					/>
 
 					<Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>

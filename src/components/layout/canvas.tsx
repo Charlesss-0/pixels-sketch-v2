@@ -1,74 +1,35 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Grid, GridNone, Minus, Plus, Redo, SidebarToggle, Undo } from '@/components/icons'
 
 import { Button } from '@/components/ui'
-import { SidebarToggle } from '@/components/icons'
 import { useAppStore } from '@/stores'
+import { useCanvas } from '@/hooks'
+import { useState } from 'react'
 
 export default function Canvas(): React.ReactNode {
-	const canvasRef = useRef<HTMLCanvasElement>(null)
-	const { isSidebarOpen, setIsSidebarOpen } = useAppStore()
-	const [isDrawing, setIsDrawing] = useState(false)
+	const { isSidebarOpen, setIsSidebarOpen, isGridEnabled, setIsGridEnabled, fillStyle, gridSize } =
+		useAppStore()
+	const [zoomValue, setZoomValue] = useState<number>(100)
 
-	useEffect(() => {
-		const canvas = canvasRef.current
-		if (!canvas) return
+	const { canvasRef, gridCanvasRef } = useCanvas(isGridEnabled, gridSize, fillStyle)
 
-		const pixelSize = 50
-		const ctx = canvas.getContext('2d')
-		if (!ctx) return
-
-		const drawGrid = (): void => {
-			for (let x = 0; x < canvas.width; x += pixelSize) {
-				for (let y = 0; y < canvas.height; y += pixelSize) {
-					ctx.strokeStyle = '#dddddd'
-					ctx.strokeRect(x, y, pixelSize, pixelSize)
-				}
-			}
-		}
-		drawGrid()
-
-		const getMousePos = (e: MouseEvent): { x: number; y: number } => {
-			const rect = canvas.getBoundingClientRect()
-			const x = Math.floor((e.clientX - rect.left) / pixelSize) * pixelSize
-			const y = Math.floor((e.clientY - rect.top) / pixelSize) * pixelSize
-
-			return { x, y }
-		}
-
-		const handleMouseDown = (e: MouseEvent): void => {
-			setIsDrawing(true)
-			const { x, y } = getMousePos(e)
-			ctx.fillStyle = '#000000'
-			ctx.fillRect(x, y, pixelSize, pixelSize)
-		}
-
-		const handleMouseMove = (e: MouseEvent): void => {
-			if (!isDrawing) return
-			const { x, y } = getMousePos(e)
-			ctx.fillRect(x, y, pixelSize, pixelSize)
-		}
-
-		const handleMouseUp = (): void => {
-			setIsDrawing(false)
-		}
-
-		canvas.addEventListener('mousedown', handleMouseDown)
-		canvas.addEventListener('mousemove', handleMouseMove)
-		canvas.addEventListener('mouseup', handleMouseUp)
-		canvas.addEventListener('mouseleave', handleMouseUp)
-
-		return (): void => {
-			canvas.removeEventListener('mousedown', handleMouseDown)
-			canvas.removeEventListener('mousemove', handleMouseMove)
-			canvas.removeEventListener('mouseup', handleMouseUp)
-			canvas.removeEventListener('mouseleave', handleMouseUp)
-		}
-	}, [isDrawing])
+	const updateZoomValue = (value: number): void => {
+		if (value < 0 || value > 100) return
+		setZoomValue(value)
+	}
 
 	return (
 		<>
+			<canvas
+				ref={gridCanvasRef}
+				width={800}
+				height={800}
+				className="absolute bg-white pointer-events-none"
+			/>
+
+			<canvas ref={canvasRef} width={800} height={800} className="bg-transparent z-10" />
+
 			<Button
 				className="absolute top-3 left-3"
 				variant="ghost"
@@ -78,7 +39,49 @@ export default function Canvas(): React.ReactNode {
 				<SidebarToggle />
 			</Button>
 
-			<canvas ref={canvasRef} width={800} height={800} className="bg-white" />
+			<div className="absolute bottom-3 left-3 flex items-center bg-dark-800 rounded-md border border-neutral-600 gap-2 h-9 overflow-hidden">
+				<Button
+					variant="ghost"
+					size="icon"
+					className="rounded-none"
+					onClick={() => updateZoomValue(zoomValue - 10)}
+				>
+					<Minus />
+				</Button>
+
+				<span className="text-sm text-light-900 font-medium text-center w-[4ch]">{zoomValue}%</span>
+
+				<Button
+					variant="ghost"
+					size="icon"
+					className="rounded-none"
+					onClick={() => updateZoomValue(zoomValue + 10)}
+				>
+					<Plus />
+				</Button>
+			</div>
+
+			<div className="absolute bottom-3 right-3 flex gap-5 items-end">
+				<div className="bg-dark-800 overflow-hidden rounded-md">
+					<Button
+						size="icon"
+						className="bg-transparent hover:bg-light-900/10 h-11 w-11"
+						onClick={() => setIsGridEnabled(!isGridEnabled)}
+					>
+						{isGridEnabled ? <Grid /> : <GridNone />}
+					</Button>
+				</div>
+
+				<div className="bg-dark-800 rounded-md flex items-center justify-between border border-neutral-600 overflow-hidden h-9 divide-x divide-neutral-600">
+					<Button variant="ghost" size="icon" className="rounded-none">
+						<Undo />
+					</Button>
+
+					<Button variant="ghost" size="icon" className="rounded-none">
+						<Redo />
+					</Button>
+				</div>
+			</div>
 		</>
 	)
 }

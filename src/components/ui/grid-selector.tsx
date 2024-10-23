@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useAppStore } from '@/stores'
 
 export default function GridSelector(): React.ReactNode {
-	const [rangeValue, setRangeValue] = useState<number>(16)
+	const { gridSize, setGridSize } = useAppStore()
 
 	const getThumbPos = (value: number): number => {
 		const min = 16
@@ -22,18 +22,18 @@ export default function GridSelector(): React.ReactNode {
 			<div className="flex flex-col gap-2 items-center w-full relative mt-5">
 				<span
 					className="font-medium text-sm transition-transform absolute -top-7"
-					style={{ left: `calc(${getThumbPos(rangeValue)}% - 10px)` }}
+					style={{ left: `calc(${getThumbPos(gridSize)}% - 10px)` }}
 				>
-					{rangeValue}
+					{gridSize}
 				</span>
 
 				<input
 					type="range"
-					value={rangeValue}
+					value={gridSize}
 					min={16}
 					max={100}
 					className="w-full rounded-full appearance-none cursor-pointer focus:outline-none"
-					onChange={e => setRangeValue(Number(e.target.value))}
+					onChange={e => setGridSize(Number(e.target.value))}
 				/>
 			</div>
 		</div>

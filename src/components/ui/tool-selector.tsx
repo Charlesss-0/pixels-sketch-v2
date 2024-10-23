@@ -1,20 +1,21 @@
 import { Eraser, PaintBucket, Pen } from '@/components/icons'
-import { useMemo, useState } from 'react'
 
 import { Button } from './button'
+import { useAppStore } from '@/stores'
+import { useMemo } from 'react'
 
 export default function ToolSelector(): React.ReactNode {
-	const [tool, setTool] = useState<'pen' | 'paintBucket' | 'eraser'>('pen')
+	const { penTool, setPenTool } = useAppStore()
 	const toolIcons = useMemo(
 		() =>
 			({
 				pen: <Pen />,
-				paintBucket: <PaintBucket />,
+				'paint-bucket': <PaintBucket />,
 				eraser: <Eraser />,
 			}) as const,
 		[]
 	)
-	const toolNames = useMemo(() => ['pen', 'paintBucket', 'eraser'] as const, [])
+	const toolNames = useMemo(() => ['pen', 'paint-bucket', 'eraser'] as const, [])
 
 	return (
 		<div className="flex flex-col gap-4 p-5">
@@ -26,8 +27,8 @@ export default function ToolSelector(): React.ReactNode {
 						key={index}
 						variant="ghost"
 						size="icon"
-						className={tool === toolName ? 'bg-light-900/10' : ''}
-						onClick={() => setTool(toolName)}
+						className={penTool === toolName ? 'bg-light-900/10' : ''}
+						onClick={() => setPenTool(toolName)}
 					>
 						{toolIcons[toolName]}
 					</Button>

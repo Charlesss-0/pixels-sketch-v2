@@ -75,3 +75,112 @@ export function PaintBucket(): React.ReactNode {
 		</svg>
 	)
 }
+
+export function Undo(): React.ReactNode {
+	return (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			className="stroke-light-900"
+		>
+			<path
+				d="M5.44444 1L1 6L5.44444 11"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M1 6H8.11111C13.0204 6 17 10.477 17 16V17"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	)
+}
+
+export function Redo(): React.ReactNode {
+	return (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			className="stroke-light-900"
+		>
+			<path
+				d="M12.5555 1L17 6L12.5555 11"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M17 6H9.88889C4.97956 6 1 10.477 1 16V17"
+				strokeWidth="2"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+		</svg>
+	)
+}
+
+export function Grid(): React.ReactNode {
+	return (
+		<svg
+			width="20"
+			height="20"
+			viewBox="0 0 20 20"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			className="fill-light-900"
+		>
+			<path d="M3.15789 0H16.8421C17.6796 0 18.4829 0.332706 19.0751 0.924926C19.6673 1.51715 20 2.32037 20 3.15789V16.8421C20 17.6796 19.6673 18.4829 19.0751 19.0751C18.4829 19.6673 17.6796 20 16.8421 20H3.15789C2.32037 20 1.51715 19.6673 0.924926 19.0751C0.332706 18.4829 0 17.6796 0 16.8421V3.15789C0 2.32037 0.332706 1.51715 0.924926 0.924926C1.51715 0.332706 2.32037 0 3.15789 0ZM3.15789 1.05263C2.59954 1.05263 2.06406 1.27444 1.66925 1.66925C1.27444 2.06406 1.05263 2.59954 1.05263 3.15789V6.31579H6.31579V1.05263H3.15789ZM1.05263 16.8421C1.05263 17.4005 1.27444 17.9359 1.66925 18.3308C2.06406 18.7256 2.59954 18.9474 3.15789 18.9474H6.31579V13.6842H1.05263V16.8421ZM6.31579 7.36842H1.05263V12.6316H6.31579V7.36842ZM16.8421 18.9474C17.4005 18.9474 17.9359 18.7256 18.3308 18.3308C18.7256 17.9359 18.9474 17.4005 18.9474 16.8421V13.6842H13.6842V18.9474H16.8421ZM18.9474 7.36842H13.6842V12.6316H18.9474V7.36842ZM18.9474 3.15789C18.9474 2.59954 18.7256 2.06406 18.3308 1.66925C17.9359 1.27444 17.4005 1.05263 16.8421 1.05263H13.6842V6.31579H18.9474V3.15789ZM7.36842 1.05263V6.31579H12.6316V1.05263H7.36842ZM7.36842 18.9474H12.6316V13.6842H7.36842V18.9474ZM12.6316 7.36842H7.36842V12.6316H12.6316V7.36842Z" />
+		</svg>
+	)
+}
+
+export function GridNone(): React.ReactNode {
+	return (
+		<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path
+				d="M4.15789 1H17.8421C18.6796 1 19.4829 1.33271 20.0751 1.92493C20.6673 2.51715 21 3.32037 21 4.15789V17.8421C21 18.6796 20.6673 19.4829 20.0751 20.0751C19.4829 20.6673 18.6796 21 17.8421 21H4.15789C3.32037 21 2.51715 20.6673 1.92493 20.0751C1.33271 19.4829 1 18.6796 1 17.8421V4.15789C1 3.32037 1.33271 2.51715 1.92493 1.92493C2.51715 1.33271 3.32037 1 4.15789 1ZM4.15789 2.05263C3.59954 2.05263 3.06406 2.27444 2.66925 2.66925C2.27444 3.06406 2.05263 3.59954 2.05263 4.15789V7.31579H7.31579V2.05263H4.15789ZM2.05263 17.8421C2.05263 18.4005 2.27444 18.9359 2.66925 19.3308C3.06406 19.7256 3.59954 19.9474 4.15789 19.9474H7.31579V14.6842H2.05263V17.8421ZM7.31579 8.36842H2.05263V13.6316H7.31579V8.36842ZM17.8421 19.9474C18.4005 19.9474 18.9359 19.7256 19.3308 19.3308C19.7256 18.9359 19.9474 18.4005 19.9474 17.8421V14.6842H14.6842V19.9474H17.8421ZM19.9474 8.36842H14.6842V13.6316H19.9474V8.36842ZM19.9474 4.15789C19.9474 3.59954 19.7256 3.06406 19.3308 2.66925C18.9359 2.27444 18.4005 2.05263 17.8421 2.05263H14.6842V7.31579H19.9474V4.15789ZM8.36842 2.05263V7.31579H13.6316V2.05263H8.36842ZM8.36842 19.9474H13.6316V14.6842H8.36842V19.9474ZM13.6316 8.36842H8.36842V13.6316H13.6316V8.36842Z"
+				fill="#EFEFEF"
+			/>
+			<path d="M1 1L21 21" stroke="#EFEFEF" stroke-linecap="round" />
+		</svg>
+	)
+}
+
+export function Plus(): React.ReactNode {
+	return (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			className="stroke-light-900"
+		>
+			<path d="M1 9H17M9 1V17" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	)
+}
+
+export function Minus(): React.ReactNode {
+	return (
+		<svg
+			width="18"
+			height="2"
+			viewBox="0 0 18 2"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			className="stroke-light-900"
+		>
+			<path d="M1 1H17" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	)
+}

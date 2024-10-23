@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react'
-
 import { Button } from './button'
 import { twMerge } from '@/utils/tw-merge'
+import { useAppStore } from '@/stores'
+import { useMemo } from 'react'
 
 export default function ColorSelector(): React.ReactNode {
-	const [color, setColor] = useState('efefef')
+	const { fillStyle, setFillStyle } = useAppStore()
 	const presetColors = useMemo(() => ['f1dca7', '2a6f97', 'fde2e4'] as const, [])
 
 	return (
@@ -15,17 +15,17 @@ export default function ColorSelector(): React.ReactNode {
 				<div className="flex items-center w-full flex-1">
 					<input
 						type="color"
-						value={`#${color}`}
+						value={`#${fillStyle}`}
 						className="cursor-pointer focus:outline-none"
-						onChange={e => setColor(e.target.value)}
+						onChange={e => setFillStyle(e.target.value)}
 					/>
 
 					<input
 						type="text"
 						maxLength={6}
-						value={color.toUpperCase()}
+						value={fillStyle.toUpperCase()}
 						className="text-sm font-medium w-full bg-transparent outline-none  border-white flex-1 text-center"
-						onChange={e => setColor(e.target.value)}
+						onChange={e => setFillStyle(e.target.value)}
 					/>
 				</div>
 			</div>
@@ -36,10 +36,10 @@ export default function ColorSelector(): React.ReactNode {
 						key={preset}
 						className={twMerge(
 							'h-9 w-9 rounded-md hover:opacity-80 transition-all duration-200',
-							color === preset && 'ring-2 ring-light-900'
+							fillStyle === preset && 'ring-2 ring-light-900'
 						)}
 						style={{ backgroundColor: `#${preset}` }}
-						onClick={() => setColor(preset)}
+						onClick={() => setFillStyle(preset)}
 					/>
 				))}
 			</div>
