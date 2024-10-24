@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
+import { useCanvasStore } from '@/stores'
+
 export default function useCanvas(
 	isGridEnabled: boolean,
 	gridSize: number,
@@ -11,6 +13,7 @@ export default function useCanvas(
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const gridCanvasRef = useRef<HTMLCanvasElement>(null)
 	const [isDrawing, setIsDrawing] = useState<boolean>(false)
+	const { actions, addAction, clearActions } = useCanvasStore()
 	const prevGridSize = useRef<number>(gridSize)
 
 	useEffect(() => {
@@ -24,6 +27,11 @@ export default function useCanvas(
 		if (!drawContext || !gridContext) return
 
 		const pixelSize = 800 / gridSize
+
+		actions.forEach(action => {
+			drawContext.fillStyle = action.color
+			drawContext.fillRect(action.x, action.y, action.size, action.size)
+		})
 
 		const drawGrid = (): void => {
 			gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height)
@@ -42,6 +50,7 @@ export default function useCanvas(
 			drawContext.clearRect(0, 0, canvas.width, canvas.height)
 			prevGridSize.current = gridSize
 			drawGrid()
+			clearActions()
 		}
 
 		const getMousePos = (e: MouseEvent): { x: number; y: number } => {
@@ -55,14 +64,21 @@ export default function useCanvas(
 		const handleMouseDown = (e: MouseEvent): void => {
 			setIsDrawing(true)
 			const { x, y } = getMousePos(e)
-			drawContext.fillStyle = `#${fillStyle}`
-			drawContext.fillRect(x, y, pixelSize, pixelSize)
+			const action = { x, y, size: pixelSize, color: `#${fillStyle}` }
+
+			drawContext.fillStyle = action.color
+			drawContext.fillRect(action.x, action.y, action.size, action.size)
+			addAction(action)
 		}
 
 		const handleMouseMove = (e: MouseEvent): void => {
 			if (!isDrawing) return
 			const { x, y } = getMousePos(e)
-			drawContext.fillRect(x, y, pixelSize, pixelSize)
+			const action = { x, y, size: pixelSize, color: `#${fillStyle}` }
+
+			drawContext.fillStyle = action.color
+			drawContext.fillRect(action.x, action.y, action.size, action.size)
+			addAction(action)
 		}
 
 		const handleMouseUp = (): void => setIsDrawing(false)
@@ -78,7 +94,7 @@ export default function useCanvas(
 			canvas.removeEventListener('mouseup', handleMouseUp)
 			canvas.removeEventListener('mouseleave', handleMouseUp)
 		}
-	}, [isDrawing, isGridEnabled, fillStyle, gridSize])
+	}, [isDrawing, isGridEnabled, fillStyle, gridSize, actions, addAction, clearActions])
 
 	return { canvasRef, gridCanvasRef }
 }
