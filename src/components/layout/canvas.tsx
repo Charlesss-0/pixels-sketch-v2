@@ -12,7 +12,11 @@ export default function Canvas(): React.ReactNode {
 		useAppStore()
 	const debouncedGridSize = useDebounce(gridSize, 500)
 	const [zoomValue, setZoomValue] = useState<number>(100)
-	const { canvasRef, gridCanvasRef } = useCanvas(isGridEnabled, debouncedGridSize, fillStyle)
+	const { canvasRef, gridCanvasRef, undo, redo } = useCanvas(
+		isGridEnabled,
+		debouncedGridSize,
+		fillStyle
+	)
 
 	const updateZoomValue = (value: number): void => {
 		if (value < 0 || value > 100) return
@@ -73,11 +77,11 @@ export default function Canvas(): React.ReactNode {
 				</div>
 
 				<div className="bg-dark-800 rounded-md flex items-center justify-between border border-neutral-600 overflow-hidden h-9 divide-x divide-neutral-600">
-					<Button variant="ghost" size="icon" className="rounded-none">
+					<Button variant="ghost" size="icon" className="rounded-none" onClick={undo}>
 						<Undo />
 					</Button>
 
-					<Button variant="ghost" size="icon" className="rounded-none">
+					<Button variant="ghost" size="icon" className="rounded-none" onClick={redo}>
 						<Redo />
 					</Button>
 				</div>
