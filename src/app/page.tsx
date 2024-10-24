@@ -1,4 +1,7 @@
-import { Canvas, Sidebar } from '@/components/layout'
+import dynamic from 'next/dynamic'
+
+const Sidebar = dynamic(() => import('@/components/layout/sidebar'), { ssr: false })
+const Canvas = dynamic(() => import('@/components/layout/canvas'), { ssr: false })
 
 export default function Home(): React.ReactNode {
 	return (

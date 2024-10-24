@@ -1,3 +1,5 @@
+import { createJSONStorage, persist } from 'zustand/middleware'
+
 import { create } from 'zustand'
 
 type State = {
@@ -18,24 +20,34 @@ type Action = {
 	setIsGridEnabled: (isGridEnabled: boolean) => void
 }
 
-const useAppStore = create<State & Action>(set => ({
-	isSidebarOpen: false,
-	setIsSidebarOpen: (isSidebarOpen: boolean): void => set({ isSidebarOpen }),
+type AppState = State & Action
 
-	projectName: 'Untitled',
-	setProjectName: (projectName: string): void => set({ projectName }),
+const useAppStore = create(
+	persist<AppState>(
+		set => ({
+			isSidebarOpen: false,
+			setIsSidebarOpen: (isSidebarOpen: boolean): void => set({ isSidebarOpen }),
 
-	penTool: 'pen',
-	setPenTool: (penTool: State['penTool']): void => set({ penTool }),
+			projectName: 'Untitled',
+			setProjectName: (projectName: string): void => set({ projectName }),
 
-	gridSize: 16,
-	setGridSize: (gridSize: number): void => set({ gridSize }),
+			penTool: 'pen',
+			setPenTool: (penTool: State['penTool']): void => set({ penTool }),
 
-	fillStyle: '000000',
-	setFillStyle: (fillStyle: string): void => set({ fillStyle }),
+			gridSize: 16,
+			setGridSize: (gridSize: number): void => set({ gridSize }),
 
-	isGridEnabled: true,
-	setIsGridEnabled: (isGridEnabled: boolean): void => set({ isGridEnabled }),
-}))
+			fillStyle: '000000',
+			setFillStyle: (fillStyle: string): void => set({ fillStyle }),
+
+			isGridEnabled: true,
+			setIsGridEnabled: (isGridEnabled: boolean): void => set({ isGridEnabled }),
+		}),
+		{
+			name: 'app-store',
+			storage: createJSONStorage(() => localStorage),
+		}
+	)
+)
 
 export default useAppStore
