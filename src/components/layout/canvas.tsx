@@ -5,22 +5,30 @@ import { useCanvas, useDebounce } from '@/hooks'
 
 import { Button } from '@/components/ui'
 import { useAppStore } from '@/stores'
-import { useState } from 'react'
 
 export default function Canvas(): React.ReactNode {
-	const { isSidebarOpen, setIsSidebarOpen, isGridEnabled, setIsGridEnabled, fillStyle, gridSize } =
-		useAppStore()
+	const {
+		isSidebarOpen,
+		setIsSidebarOpen,
+		penTool,
+		gridSize,
+		isGridEnabled,
+		setIsGridEnabled,
+		fillStyle,
+		zoom,
+		setZoom,
+	} = useAppStore()
 	const debouncedGridSize = useDebounce(gridSize, 500)
-	const [zoomValue, setZoomValue] = useState<number>(100)
 	const { canvasRef, gridCanvasRef, undo, redo } = useCanvas(
 		isGridEnabled,
 		debouncedGridSize,
-		fillStyle
+		fillStyle,
+		penTool
 	)
 
-	const updateZoomValue = (value: number): void => {
+	const handleZoomUpdate = (value: number): void => {
 		if (value < 0 || value > 100) return
-		setZoomValue(value)
+		setZoom(value)
 	}
 
 	return (
@@ -48,18 +56,18 @@ export default function Canvas(): React.ReactNode {
 					variant="ghost"
 					size="icon"
 					className="rounded-none"
-					onClick={() => updateZoomValue(zoomValue - 10)}
+					onClick={() => handleZoomUpdate(zoom - 10)}
 				>
 					<Minus />
 				</Button>
 
-				<span className="text-sm text-light-900 font-medium text-center w-[4ch]">{zoomValue}%</span>
+				<span className="text-sm text-light-900 font-medium text-center w-[4ch]">{zoom}%</span>
 
 				<Button
 					variant="ghost"
 					size="icon"
 					className="rounded-none"
-					onClick={() => updateZoomValue(zoomValue + 10)}
+					onClick={() => handleZoomUpdate(zoom + 10)}
 				>
 					<Plus />
 				</Button>

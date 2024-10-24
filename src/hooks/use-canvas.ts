@@ -5,7 +5,8 @@ import { useCanvasStore } from '@/stores'
 export default function useCanvas(
 	isGridEnabled: boolean,
 	gridSize: number,
-	fillStyle: string
+	fillStyle: string,
+	penTool: 'pen' | 'paint-bucket' | 'eraser'
 ): {
 	canvasRef: React.RefObject<HTMLCanvasElement>
 	gridCanvasRef: React.RefObject<HTMLCanvasElement>
@@ -35,6 +36,11 @@ export default function useCanvas(
 			drawContext.clearRect(0, 0, canvas.width, canvas.height)
 			actions.forEach(action => {
 				action.forEach(stroke => {
+					if (stroke.color === 'transparent') {
+						drawContext.clearRect(stroke.x, stroke.y, stroke.size, stroke.size)
+						return
+					}
+
 					drawContext.fillStyle = stroke.color
 					drawContext.fillRect(stroke.x, stroke.y, stroke.size, stroke.size)
 				})
@@ -73,23 +79,48 @@ export default function useCanvas(
 		const handleMouseDown = (e: MouseEvent): void => {
 			setIsDrawing(true)
 			const { x, y } = getMousePos(e)
-			const action = { x, y, size: pixelSize, color: `#${fillStyle}` }
 
-			drawContext.fillStyle = action.color
-			drawContext.fillRect(action.x, action.y, action.size, action.size)
+			if (penTool === 'paint-bucket') {
+				const bucketAction = { x: 0, y: 0, size: canvas.width, color: `#${fillStyle}` }
 
-			drawingActions.current = [{ x, y, size: pixelSize, color: `#${fillStyle}` }]
+				drawContext.fillStyle = `#${fillStyle}`
+				drawContext.fillRect(0, 0, canvas.width, canvas.height)
+
+				addAction([bucketAction])
+			} else if (penTool === 'eraser') {
+				const eraseAction = { x, y, size: pixelSize, color: 'transparent' }
+
+				drawContext.clearRect(eraseAction.x, eraseAction.y, eraseAction.size, eraseAction.size)
+
+				drawingActions.current.push(eraseAction)
+			} else {
+				const drawAction = { x, y, size: pixelSize, color: `#${fillStyle}` }
+
+				drawContext.fillStyle = drawAction.color
+				drawContext.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size)
+
+				drawingActions.current.push(drawAction)
+			}
 		}
 
 		const handleMouseMove = (e: MouseEvent): void => {
 			if (!isDrawing) return
 			const { x, y } = getMousePos(e)
-			const action = { x, y, size: pixelSize, color: `#${fillStyle}` }
 
-			drawContext.fillStyle = action.color
-			drawContext.fillRect(action.x, action.y, action.size, action.size)
+			if (penTool === 'eraser') {
+				const eraseAction = { x, y, size: pixelSize, color: 'transparent' }
 
-			drawingActions.current.push(action)
+				drawContext.clearRect(eraseAction.x, eraseAction.y, eraseAction.size, eraseAction.size)
+
+				drawingActions.current.push(eraseAction)
+			} else {
+				const drawAction = { x, y, size: pixelSize, color: `#${fillStyle}` }
+
+				drawContext.fillStyle = drawAction.color
+				drawContext.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size)
+
+				drawingActions.current.push(drawAction)
+			}
 		}
 
 		const handleMouseUp = (): void => {
@@ -112,7 +143,7 @@ export default function useCanvas(
 			canvas.removeEventListener('mouseup', handleMouseUp)
 			canvas.removeEventListener('mouseleave', handleMouseUp)
 		}
-	}, [isDrawing, isGridEnabled, fillStyle, gridSize, actions, addAction, clearActions])
+	}, [isDrawing, isGridEnabled, fillStyle, gridSize, actions, addAction, clearActions, penTool])
 
 	return { canvasRef, gridCanvasRef, redo, undo }
 }

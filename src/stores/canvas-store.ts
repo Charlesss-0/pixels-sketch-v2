@@ -1,33 +1,40 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-type DrawingAction = {
+type DrawingActions = {
 	x: number
 	y: number
 	size: number
 	color: string
 }
 
-type CanvasState = {
-	actions: DrawingAction[][]
-	redoStack: DrawingAction[][]
-	addAction: (action: DrawingAction[]) => void
+type State = {
+	actions: DrawingActions[][]
+	redoStack: DrawingActions[][]
+}
+
+type Action = {
+	addAction: (action: DrawingActions[]) => void
 	undo: () => void
 	redo: () => void
 	clearActions: () => void
 }
 
+type CanvasState = State & Action
+
 const useCanvasStore = create(
 	persist<CanvasState>(
 		(set, get) => ({
-			actions: [],
 			redoStack: [],
+
+			actions: [],
 			addAction: (stroke): void => {
 				set(state => ({
 					actions: [...state.actions, stroke],
 					redoStack: [],
 				}))
 			},
+
 			undo: (): void => {
 				const { actions, redoStack } = get()
 				if (actions.length === 0) return
@@ -50,6 +57,7 @@ const useCanvasStore = create(
 					set({ actions: [...actions, redoAction], redoStack: newRedoStack })
 				}
 			},
+
 			clearActions: (): void => set({ actions: [] }),
 		}),
 		{ name: 'canvas-store' }
