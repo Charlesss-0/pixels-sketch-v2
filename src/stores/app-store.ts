@@ -38,7 +38,7 @@ const useAppStore = create(
 			penTool: 'pen',
 			setPenTool: (penTool: State['penTool']): void => set({ penTool }),
 
-			gridSize: 16,
+			gridSize: 7,
 			setGridSize: (gridSize: number): void => set({ gridSize }),
 
 			fillStyle: '000000',

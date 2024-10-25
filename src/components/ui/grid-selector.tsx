@@ -4,7 +4,7 @@ export default function GridSelector(): React.ReactNode {
 	const { gridSize, setGridSize } = useAppStore()
 
 	const getThumbPos = (value: number): number => {
-		const min = 16
+		const min = 8
 		const max = 100
 		const percent = Math.floor(((value - min) / (max - min)) * 100)
 
@@ -30,7 +30,7 @@ export default function GridSelector(): React.ReactNode {
 				<input
 					type="range"
 					value={gridSize}
-					min={16}
+					min={8}
 					max={100}
 					className="w-full rounded-full appearance-none cursor-pointer focus:outline-none"
 					onChange={e => setGridSize(Number(e.target.value))}
