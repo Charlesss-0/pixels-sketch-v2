@@ -47,11 +47,11 @@ export default function Canvas(): React.ReactNode {
 				ref={gridCanvasRef}
 				width={800}
 				height={800}
-				className="absolute bg-transparent pointer-events-none z-10"
+				className="absolute z-10 bg-transparent pointer-events-none"
 			/>
 
 			<Button
-				className="absolute top-3 left-3 rounded-md"
+				className="absolute rounded-md top-3 left-3"
 				variant="ghost"
 				size="icon"
 				onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -59,8 +59,8 @@ export default function Canvas(): React.ReactNode {
 				<SidebarToggle />
 			</Button>
 
-			<div className="absolute bottom-3 right-3 flex gap-5 items-end">
-				<div className="bg-dark-800 overflow-hidden rounded-md">
+			<div className="absolute flex items-end gap-5 bottom-3 right-3">
+				<div className="overflow-hidden rounded-md bg-dark-800">
 					<Button
 						size="icon"
 						className="bg-transparent hover:bg-light-900/10 h-11 w-11"
@@ -70,7 +70,7 @@ export default function Canvas(): React.ReactNode {
 					</Button>
 				</div>
 
-				<div className="bg-dark-800 rounded-md flex items-center justify-between border border-neutral-600 overflow-hidden h-9 divide-x divide-neutral-600">
+				<div className="flex items-center justify-between overflow-hidden border divide-x rounded-md bg-dark-800 border-neutral-600 h-9 divide-neutral-600">
 					<Button variant="ghost" size="icon" className="rounded-none" onClick={undo}>
 						<Undo />
 					</Button>
@@ -82,9 +82,9 @@ export default function Canvas(): React.ReactNode {
 			</div>
 
 			{isExporting && (
-				<div className="absolute top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-10">
-					<div className="bg-dark-800 rounded-xl p-5 flex gap-10 z-20">
-						<div className="w-64 h-56 rounded-lg border border-neutral-600 overflow-hidden">
+				<div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full bg-black/50">
+					<div className="z-20 flex gap-10 p-6 shadow-xl bg-dark-800 rounded-xl">
+						<div className="w-64 h-64 overflow-hidden border rounded-lg border-neutral-600">
 							{preview && (
 								// eslint-disable-next-line @next/next/no-img-element
 								<img
@@ -97,7 +97,7 @@ export default function Canvas(): React.ReactNode {
 						</div>
 
 						<div className="flex flex-col justify-between">
-							<div className="flex gap-3 flex-wrap">
+							<div className="flex flex-wrap gap-3">
 								{formats.map(format => (
 									<Button
 										key={format}
@@ -112,7 +112,7 @@ export default function Canvas(): React.ReactNode {
 								))}
 							</div>
 
-							<div className="flex gap-5 justify-end">
+							<div className="flex justify-end gap-5">
 								<Button
 									className="border-none w-28 bg-neutral-600 hover:bg-neutral-600/80"
 									onClick={() => setIsExporting(false)}
@@ -121,7 +121,7 @@ export default function Canvas(): React.ReactNode {
 								</Button>
 
 								<Button
-									className="bg-primary border-none w-24 text-light-900 hover:bg-primary/80"
+									className="w-24 border-none bg-primary text-light-900 hover:bg-primary/80"
 									onClick={() => {
 										exportCanvas(exportFormat)
 										setIsExporting(false)
