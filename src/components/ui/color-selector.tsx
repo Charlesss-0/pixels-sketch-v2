@@ -11,8 +11,8 @@ export default function ColorSelector(): React.ReactNode {
 		<div className="flex flex-col gap-4 p-5">
 			<span>Color</span>
 
-			<div className="flex items-center w-full border rounded-md border-neutral-600 bg-dark-900 p-1">
-				<div className="flex items-center w-full flex-1">
+			<div className="flex items-center w-full p-1 border rounded-md border-neutral-600 bg-dark-900">
+				<div className="flex items-center flex-1 w-full">
 					<input
 						type="color"
 						value={`#${fillStyle}`}
@@ -24,7 +24,7 @@ export default function ColorSelector(): React.ReactNode {
 						type="text"
 						maxLength={6}
 						value={fillStyle.toUpperCase()}
-						className="text-sm font-medium w-full bg-transparent outline-none  border-white flex-1 text-center"
+						className="flex-1 w-full text-sm font-medium text-center bg-transparent border-white outline-none"
 						onChange={e => setFillStyle(e.target.value.replace(/[^a-fA-F0-9]/g, ''))}
 					/>
 				</div>
