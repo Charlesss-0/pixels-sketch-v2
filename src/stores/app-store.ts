@@ -9,6 +9,8 @@ type State = {
 	gridSize: number
 	fillStyle: string
 	isGridEnabled: boolean
+	isExporting: boolean
+	exportFormat: 'png' | 'jpeg' | 'svg'
 }
 
 type Action = {
@@ -18,6 +20,8 @@ type Action = {
 	setGridSize: (gridSize: number) => void
 	setFillStyle: (fillStyle: string) => void
 	setIsGridEnabled: (isGridEnabled: boolean) => void
+	setIsExporting: (isExporting: boolean) => void
+	setExportFormat: (exportFormat: State['exportFormat']) => void
 }
 
 type AppState = State & Action
@@ -42,6 +46,12 @@ const useAppStore = create(
 
 			isGridEnabled: true,
 			setIsGridEnabled: (isGridEnabled: boolean): void => set({ isGridEnabled }),
+
+			isExporting: false,
+			setIsExporting: (isExporting: boolean): void => set({ isExporting }),
+
+			exportFormat: 'png',
+			setExportFormat: (exportFormat: State['exportFormat']): void => set({ exportFormat }),
 		}),
 		{
 			name: 'app-store',

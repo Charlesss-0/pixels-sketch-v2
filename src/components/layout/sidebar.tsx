@@ -7,7 +7,8 @@ import { twMerge } from '@/utils/tw-merge'
 import { useAppStore } from '@/stores'
 
 export default function Sidebar(): React.ReactNode {
-	const { isSidebarOpen, setIsSidebarOpen, projectName, setProjectName } = useAppStore()
+	const { isSidebarOpen, setIsSidebarOpen, projectName, setProjectName, setIsExporting } =
+		useAppStore()
 
 	return (
 		<aside
@@ -26,7 +27,12 @@ export default function Sidebar(): React.ReactNode {
 						onChange={e => setProjectName(e.target.value)}
 					/>
 
-					<Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+					<Button
+						variant="ghost"
+						size="icon"
+						className="rounded-md"
+						onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+					>
 						<SidebarToggle />
 					</Button>
 				</div>
@@ -37,7 +43,7 @@ export default function Sidebar(): React.ReactNode {
 			</div>
 
 			<div className="flex flex-col justify-end flex-1 w-full p-5">
-				<Button>Export</Button>
+				<Button onClick={() => setIsExporting(true)}>Export</Button>
 			</div>
 		</aside>
 	)
