@@ -5,7 +5,7 @@ import { geistMono, geistSans, poppins } from './fonts'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-	title: 'Pixels Sketch',
+	title: 'Pixel Sketch',
 	description: 'Pixel art editor',
 }
 
