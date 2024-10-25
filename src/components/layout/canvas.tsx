@@ -87,7 +87,12 @@ export default function Canvas(): React.ReactNode {
 						<div className="w-64 h-56 rounded-lg border border-neutral-600 overflow-hidden">
 							{preview && (
 								// eslint-disable-next-line @next/next/no-img-element
-								<img src={preview} alt="Export Preview" className="w-full h-full" />
+								<img
+									src={preview}
+									alt="Export Preview"
+									className="w-full h-full select-none"
+									draggable={false}
+								/>
 							)}
 						</div>
 

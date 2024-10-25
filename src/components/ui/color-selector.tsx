@@ -17,7 +17,7 @@ export default function ColorSelector(): React.ReactNode {
 						type="color"
 						value={`#${fillStyle}`}
 						className="cursor-pointer focus:outline-none"
-						onChange={e => setFillStyle(e.target.value)}
+						onChange={e => setFillStyle(e.target.value.slice(1))}
 					/>
 
 					<input
@@ -25,7 +25,7 @@ export default function ColorSelector(): React.ReactNode {
 						maxLength={6}
 						value={fillStyle.toUpperCase()}
 						className="text-sm font-medium w-full bg-transparent outline-none  border-white flex-1 text-center"
-						onChange={e => setFillStyle(e.target.value)}
+						onChange={e => setFillStyle(e.target.value.replace(/[^a-fA-F0-9]/g, ''))}
 					/>
 				</div>
 			</div>
