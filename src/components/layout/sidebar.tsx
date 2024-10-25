@@ -13,7 +13,7 @@ export default function Sidebar(): React.ReactNode {
 		<aside
 			className={twMerge(
 				'absolute flex flex-col text-sm font-semibold border divide-y rounded-lg select-none w-52 bg-dark-800 top-3 left-3 bottom-3 border-neutral-600 text-light-900 divide-neutral-600 z-10 transition-all duration-200 ease-in-out',
-				isSidebarOpen ? '-translate-x-56' : 'translate-x-0'
+				isSidebarOpen ? 'translate-x-0' : '-translate-x-56'
 			)}
 		>
 			<div className="divide-y divide-neutral-600">

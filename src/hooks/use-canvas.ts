@@ -34,6 +34,7 @@ export default function useCanvas(
 
 		const drawActions = (): void => {
 			drawContext.clearRect(0, 0, canvas.width, canvas.height)
+
 			actions.forEach(action => {
 				action.forEach(stroke => {
 					if (stroke.color === 'transparent') {
@@ -45,6 +46,8 @@ export default function useCanvas(
 					drawContext.fillRect(stroke.x, stroke.y, stroke.size, stroke.size)
 				})
 			})
+
+			drawContext.restore()
 		}
 
 		const drawGrid = (): void => {
@@ -57,6 +60,8 @@ export default function useCanvas(
 					gridContext.strokeRect(x, y, pixelSize, pixelSize)
 				}
 			}
+
+			gridContext.restore()
 		}
 		drawGrid()
 		drawActions()
@@ -105,6 +110,7 @@ export default function useCanvas(
 
 		const handleMouseMove = (e: MouseEvent): void => {
 			if (!isDrawing) return
+
 			const { x, y } = getMousePos(e)
 
 			if (penTool === 'eraser') {

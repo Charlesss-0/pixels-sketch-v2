@@ -1,6 +1,6 @@
 'use client'
 
-import { Grid, GridNone, Minus, Plus, Redo, SidebarToggle, Undo } from '@/components/icons'
+import { CrossedGrid, Grid, Redo, SidebarToggle, Undo } from '@/components/icons'
 import { useCanvas, useDebounce } from '@/hooks'
 
 import { Button } from '@/components/ui'
@@ -15,8 +15,6 @@ export default function Canvas(): React.ReactNode {
 		isGridEnabled,
 		setIsGridEnabled,
 		fillStyle,
-		zoom,
-		setZoom,
 	} = useAppStore()
 	const debouncedGridSize = useDebounce(gridSize, 500)
 	const { canvasRef, gridCanvasRef, undo, redo } = useCanvas(
@@ -26,21 +24,16 @@ export default function Canvas(): React.ReactNode {
 		penTool
 	)
 
-	const handleZoomUpdate = (value: number): void => {
-		if (value < 0 || value > 100) return
-		setZoom(value)
-	}
-
 	return (
 		<>
+			<canvas ref={canvasRef} width={800} height={800} className="absolute bg-white" />
+
 			<canvas
 				ref={gridCanvasRef}
 				width={800}
 				height={800}
-				className="absolute bg-white pointer-events-none"
+				className="absolute bg-transparent pointer-events-none z-10"
 			/>
-
-			<canvas ref={canvasRef} width={800} height={800} className="bg-transparent z-10" />
 
 			<Button
 				className="absolute top-3 left-3"
@@ -51,28 +44,6 @@ export default function Canvas(): React.ReactNode {
 				<SidebarToggle />
 			</Button>
 
-			<div className="absolute bottom-3 left-3 flex items-center bg-dark-800 rounded-md border border-neutral-600 gap-2 h-9 overflow-hidden">
-				<Button
-					variant="ghost"
-					size="icon"
-					className="rounded-none"
-					onClick={() => handleZoomUpdate(zoom - 10)}
-				>
-					<Minus />
-				</Button>
-
-				<span className="text-sm text-light-900 font-medium text-center w-[4ch]">{zoom}%</span>
-
-				<Button
-					variant="ghost"
-					size="icon"
-					className="rounded-none"
-					onClick={() => handleZoomUpdate(zoom + 10)}
-				>
-					<Plus />
-				</Button>
-			</div>
-
 			<div className="absolute bottom-3 right-3 flex gap-5 items-end">
 				<div className="bg-dark-800 overflow-hidden rounded-md">
 					<Button
@@ -80,7 +51,7 @@ export default function Canvas(): React.ReactNode {
 						className="bg-transparent hover:bg-light-900/10 h-11 w-11"
 						onClick={() => setIsGridEnabled(!isGridEnabled)}
 					>
-						{isGridEnabled ? <Grid /> : <GridNone />}
+						{isGridEnabled ? <Grid /> : <CrossedGrid />}
 					</Button>
 				</div>
 

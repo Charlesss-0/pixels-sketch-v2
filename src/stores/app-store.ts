@@ -9,7 +9,6 @@ type State = {
 	gridSize: number
 	fillStyle: string
 	isGridEnabled: boolean
-	zoom: number
 }
 
 type Action = {
@@ -19,7 +18,6 @@ type Action = {
 	setGridSize: (gridSize: number) => void
 	setFillStyle: (fillStyle: string) => void
 	setIsGridEnabled: (isGridEnabled: boolean) => void
-	setZoom: (zoom: number) => void
 }
 
 type AppState = State & Action
@@ -44,9 +42,6 @@ const useAppStore = create(
 
 			isGridEnabled: true,
 			setIsGridEnabled: (isGridEnabled: boolean): void => set({ isGridEnabled }),
-
-			zoom: 100,
-			setZoom: (zoom: number): void => set({ zoom }),
 		}),
 		{
 			name: 'app-store',
