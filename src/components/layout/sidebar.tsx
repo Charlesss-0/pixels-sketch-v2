@@ -3,7 +3,7 @@
 import { Button, ColorSelector, GridSelector, ToolSelector } from '@/components/ui'
 
 import { SidebarToggle } from '@/components/icons'
-import { twMerge } from '@/utils/tw-merge'
+import { twMerge } from '@/utils'
 import { useAppStore } from '@/stores'
 
 export default function Sidebar(): React.ReactNode {

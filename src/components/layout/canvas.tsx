@@ -1,34 +1,28 @@
 'use client'
 
 import { CrossedGrid, Grid, Redo, SidebarToggle, Undo } from '@/components/icons'
-import { useCanvas, useDebounce } from '@/hooks'
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui'
-import { twMerge } from '@/utils/tw-merge'
+import { twMerge } from '@/utils'
 import { useAppStore } from '@/stores'
+import { useCanvas } from '@/hooks'
+import useDebounce from '@/hooks/use-debounce'
 
 export default function Canvas(): React.ReactNode {
 	const {
 		isSidebarOpen,
 		setIsSidebarOpen,
-		penTool,
 		gridSize,
 		isGridEnabled,
 		setIsGridEnabled,
-		fillStyle,
 		isExporting,
 		setIsExporting,
 		exportFormat,
 		setExportFormat,
 	} = useAppStore()
 	const debouncedGridSize = useDebounce(gridSize, 500)
-	const { canvasRef, gridCanvasRef, undo, redo, exportCanvas } = useCanvas(
-		isGridEnabled,
-		debouncedGridSize,
-		fillStyle,
-		penTool
-	)
+	const { canvasRef, gridCanvasRef, undo, redo, exportCanvas } = useCanvas(debouncedGridSize)
 	const formats = ['PNG', 'JPEG', 'SVG'] as const
 	const [preview, setPreview] = useState<string | null>(null)
 
@@ -83,8 +77,8 @@ export default function Canvas(): React.ReactNode {
 
 			{isExporting && (
 				<div className="absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full bg-black/50">
-					<div className="z-20 flex gap-10 p-6 shadow-xl bg-dark-800 rounded-xl">
-						<div className="w-64 h-64 overflow-hidden border rounded-lg border-neutral-600">
+					<div className="z-20 flex gap-10 p-6 shadow-lg bg-dark-800 rounded-xl">
+						<div className="w-64 h-64 overflow-hidden border rounded-lg border-neutral-600 shadow-md">
 							{preview && (
 								// eslint-disable-next-line @next/next/no-img-element
 								<img

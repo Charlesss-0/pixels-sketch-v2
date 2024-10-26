@@ -1,132 +1,128 @@
 import { useAppStore, useCanvasStore } from '@/stores'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-export default function useCanvas(
-	isGridEnabled: boolean,
-	gridSize: number,
-	fillStyle: string,
-	penTool: 'pen' | 'paint-bucket' | 'eraser'
-): {
+import { applyTransformations } from '@/utils'
+import useExport from './use-export'
+import useGrid from './use-grid'
+
+export default function useCanvas(gridSize: number): {
 	canvasRef: React.RefObject<HTMLCanvasElement>
 	gridCanvasRef: React.RefObject<HTMLCanvasElement>
 	redo: () => void
 	undo: () => void
 	exportCanvas: (format: 'png' | 'jpeg' | 'svg', previewOnly?: boolean) => string | void
 } {
-	const { projectName } = useAppStore()
+	const { penTool, fillStyle, isGridEnabled } = useAppStore()
+	const { actions, addAction, clearActions, undo, redo } = useCanvasStore()
+
 	const canvasRef = useRef<HTMLCanvasElement>(null)
 	const gridCanvasRef = useRef<HTMLCanvasElement>(null)
-	const [isDrawing, setIsDrawing] = useState<boolean>(false)
+	const panStart = useRef<{ x: number; y: number } | null>(null)
 	const drawingActions = useRef<Array<{ x: number; y: number; size: number; color: string }>>([])
-	const { actions, addAction, clearActions, undo, redo } = useCanvasStore()
-	const prevGridSize = useRef<number>(gridSize)
 
-	useEffect(() => {
-		const canvas = canvasRef.current
-		const gridCanvas = gridCanvasRef.current
-		if (!canvas || !gridCanvas) return
+	const [isDrawing, setIsDrawing] = useState<boolean>(false)
+	const [isPanning, setIsPanning] = useState(false)
+	const [isSpacePressed, setIsSpacePressed] = useState<boolean>(false)
+	const [scale, setScale] = useState<number>(1)
+	const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
 
-		const drawContext = canvas.getContext('2d')
-		const gridContext = gridCanvas.getContext('2d')
+	const { pixelSize } = useGrid(gridCanvasRef, scale, offset)
+	const { exportCanvas } = useExport(canvasRef, actions)
 
-		if (!drawContext || !gridContext) return
+	const MIN_SCALE = 0.5
+	const MAX_SCALE = 5
+	const SCALE_STEP = 0.1
+	const PAN_SPEED = 2
 
-		const pixelSize = 800 / gridSize
+	const drawActions = useCallback(
+		(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) => {
+			context.resetTransform()
+			context.clearRect(0, 0, canvas.width, canvas.height)
 
-		const drawActions = (): void => {
-			drawContext.clearRect(0, 0, canvas.width, canvas.height)
+			applyTransformations(canvas, context, scale, offset)
 
 			actions.forEach(action => {
 				action.forEach(stroke => {
 					if (stroke.color === 'transparent') {
-						drawContext.clearRect(stroke.x, stroke.y, stroke.size, stroke.size)
+						context.clearRect(stroke.x, stroke.y, stroke.size, stroke.size)
 						return
 					}
 
-					drawContext.fillStyle = stroke.color
-					drawContext.fillRect(stroke.x, stroke.y, stroke.size, stroke.size)
+					context.fillStyle = stroke.color
+					context.fillRect(stroke.x, stroke.y, stroke.size, stroke.size)
 				})
 			})
 
-			drawContext.restore()
-		}
+			context.restore()
+		},
+		[actions, scale, offset]
+	)
 
-		const drawGrid = (): void => {
-			gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height)
-			if (!isGridEnabled) return
+	useEffect(() => {
+		const canvas = canvasRef.current
+		if (!canvas) return
 
-			for (let x = 0; x < gridCanvas.width; x += pixelSize) {
-				for (let y = 0; y < gridCanvas.height; y += pixelSize) {
-					gridContext.strokeStyle = '#dddddd'
-					gridContext.strokeRect(x, y, pixelSize, pixelSize)
-				}
-			}
+		const context = canvas.getContext('2d')
+		if (!context) return
 
-			gridContext.restore()
-		}
-		drawGrid()
-		drawActions()
-
-		if (prevGridSize.current !== gridSize) {
-			drawContext.clearRect(0, 0, canvas.width, canvas.height)
-			prevGridSize.current = gridSize
-			drawGrid()
-			clearActions()
-		}
+		drawActions(canvas, context)
 
 		const getMousePos = (e: MouseEvent): { x: number; y: number } => {
 			const rect = canvas.getBoundingClientRect()
-			const x = Math.floor((e.clientX - rect.left) / pixelSize) * pixelSize
-			const y = Math.floor((e.clientY - rect.top) / pixelSize) * pixelSize
+
+			const x = Math.floor((e.clientX - rect.left - offset.x) / scale / pixelSize) * pixelSize
+			const y = Math.floor((e.clientY - rect.top - offset.y) / scale / pixelSize) * pixelSize
 
 			return { x, y }
 		}
 
 		const handleMouseDown = (e: MouseEvent): void => {
-			setIsDrawing(true)
-			const { x, y } = getMousePos(e)
+			if (!isSpacePressed) {
+				setIsDrawing(true)
+				const { x, y } = getMousePos(e)
 
-			if (penTool === 'paint-bucket') {
-				const bucketAction = { x: 0, y: 0, size: canvas.width, color: `#${fillStyle}` }
+				if (penTool === 'paint-bucket') {
+					const bucketAction = { x: 0, y: 0, size: canvas.width, color: `#${fillStyle}` }
 
-				drawContext.fillStyle = `#${fillStyle}`
-				drawContext.fillRect(0, 0, canvas.width, canvas.height)
+					context.fillStyle = `#${fillStyle}`
+					context.fillRect(0, 0, canvas.width, canvas.height)
 
-				addAction([bucketAction])
-			} else if (penTool === 'eraser') {
-				const eraseAction = { x, y, size: pixelSize, color: 'transparent' }
+					addAction([bucketAction])
+				} else if (penTool === 'eraser') {
+					const eraseAction = { x, y, size: pixelSize, color: 'transparent' }
 
-				drawContext.clearRect(eraseAction.x, eraseAction.y, eraseAction.size, eraseAction.size)
+					context.clearRect(eraseAction.x, eraseAction.y, eraseAction.size, eraseAction.size)
 
-				drawingActions.current.push(eraseAction)
-			} else {
-				const drawAction = { x, y, size: pixelSize, color: `#${fillStyle}` }
+					drawingActions.current.push(eraseAction)
+				} else {
+					const drawAction = { x, y, size: pixelSize, color: `#${fillStyle}` }
 
-				drawContext.fillStyle = drawAction.color
-				drawContext.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size)
+					context.fillStyle = drawAction.color
+					context.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size)
 
-				drawingActions.current.push(drawAction)
+					drawingActions.current.push(drawAction)
+				}
 			}
 		}
 
 		const handleMouseMove = (e: MouseEvent): void => {
-			if (!isDrawing) return
+			if (isDrawing) {
+				const { x, y } = getMousePos(e)
 
-			const { x, y } = getMousePos(e)
+				if (penTool === 'eraser') {
+					const eraseAction = { x, y, size: pixelSize, color: 'transparent' }
 
-			if (penTool === 'eraser') {
-				const eraseAction = { x, y, size: pixelSize, color: 'transparent' }
+					context.clearRect(eraseAction.x, eraseAction.y, eraseAction.size, eraseAction.size)
 
-				drawContext.clearRect(eraseAction.x, eraseAction.y, eraseAction.size, eraseAction.size)
+					drawingActions.current.push(eraseAction)
+				} else {
+					const drawAction = { x, y, size: pixelSize, color: `#${fillStyle}` }
 
-				drawingActions.current.push(eraseAction)
-			} else {
-				const drawAction = { x, y, size: pixelSize, color: `#${fillStyle}` }
+					context.fillStyle = drawAction.color
+					context.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size)
 
-				drawContext.fillStyle = drawAction.color
-				drawContext.fillRect(drawAction.x, drawAction.y, drawAction.size, drawAction.size)
-
-				drawingActions.current.push(drawAction)
+					drawingActions.current.push(drawAction)
+				}
 			}
 		}
 
@@ -150,81 +146,86 @@ export default function useCanvas(
 			canvas.removeEventListener('mouseup', handleMouseUp)
 			canvas.removeEventListener('mouseleave', handleMouseUp)
 		}
-	}, [isDrawing, isGridEnabled, fillStyle, gridSize, actions, addAction, clearActions, penTool])
+	}, [
+		isDrawing,
+		isGridEnabled,
+		fillStyle,
+		gridSize,
+		actions,
+		addAction,
+		clearActions,
+		penTool,
+		pixelSize,
+		isSpacePressed,
+		offset,
+		scale,
+		drawActions,
+	])
 
-	const exportCanvas = (format: 'png' | 'jpeg' | 'svg', previewOnly = false): string | void => {
+	useEffect(() => {
 		const canvas = canvasRef.current
 		if (!canvas) return
-		const ctx = canvas.getContext('2d')
-		if (!ctx) return
 
-		const getVisibleStrokes = (): Array<{ x: number; y: number; size: number; color: string }> => {
-			const visibleStrokes = new Map<
-				string,
-				{ x: number; y: number; size: number; color: string }
-			>()
-
-			actions.forEach(actionGroup => {
-				actionGroup.forEach(stroke => {
-					const key = `${stroke.x}-${stroke.y}`
-					if (stroke.color === 'transparent') {
-						// Remove any strokes at this location if using eraser
-						visibleStrokes.delete(key)
-					} else {
-						// Update or add the stroke if it's a visible color
-						visibleStrokes.set(key, stroke)
-					}
-				})
-			})
-
-			return Array.from(visibleStrokes.values())
+		const handleWheel = (e: WheelEvent): void => {
+			e.preventDefault()
+			const delta = e.deltaY > 0 ? -SCALE_STEP : SCALE_STEP
+			setScale(prev => Math.min(MAX_SCALE, Math.max(MIN_SCALE, prev + delta)))
 		}
 
-		if (format === 'svg') {
-			const visibleStrokes = getVisibleStrokes()
+		const handleKeyDown = (e: KeyboardEvent): void => {
+			if (e.code === 'Space') setIsSpacePressed(true)
+		}
 
-			const svgData = `
-				<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
-					${visibleStrokes
-						.map(
-							stroke => `
-					<rect x="${stroke.x}" y="${stroke.y}" width="${stroke.size}" height="${stroke.size}" fill="${stroke.color}" />
-					`
-						)
-						.join('')}
-				</svg>
-			`
+		const handleKeyUp = (e: KeyboardEvent): void => {
+			if (e.code === 'Space') setIsSpacePressed(false)
+		}
 
-			if (previewOnly) return `data:image/svg+xml;base64,${btoa(svgData)}` as const
-
-			const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' })
-			const url = URL.createObjectURL(blob)
-			const link = document.createElement('a')
-			link.href = url
-			link.download = `${projectName}.svg`
-			link.click()
-
-			URL.revokeObjectURL(url)
-		} else {
-			ctx.save()
-			ctx.globalCompositeOperation = 'destination-over'
-			ctx.fillStyle = '#FFFFFF'
-			ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-			const dataURL = canvas.toDataURL(`image/${format}`)
-
-			if (previewOnly) {
-				ctx.restore()
-				return dataURL
+		const handlePanStart = (e: MouseEvent): void => {
+			if (isSpacePressed && e.button === 0) {
+				// start panning if space + left click
+				setIsPanning(true)
+				setIsDrawing(false)
+				panStart.current = { x: e.clientX, y: e.clientY }
 			}
-
-			const link = document.createElement('a')
-			link.href = dataURL
-			link.download = `${projectName}.${format}`
-			link.click()
-			ctx.restore()
 		}
-	}
+
+		const handlePanMove = (e: MouseEvent): void => {
+			if (isPanning && panStart.current) {
+				const deltaX = ((e.clientX - panStart.current.x) / scale) * PAN_SPEED
+				const deltaY = ((e.clientY - panStart.current.y) / scale) * PAN_SPEED
+
+				setOffset(prev => ({
+					x: Math.min(Math.max(prev.x + deltaX, -canvas.width * (scale - 1)), 0),
+					y: Math.min(Math.max(prev.y + deltaY, -canvas.height * (scale - 1)), 0),
+				}))
+
+				panStart.current = { x: e.clientX, y: e.clientY }
+			}
+		}
+
+		const handleMouseUp = (): void => {
+			setIsPanning(false)
+			panStart.current = null
+		}
+
+		canvas.addEventListener('wheel', handleWheel)
+		canvas.addEventListener('mousedown', handlePanStart)
+		canvas.addEventListener('mousemove', handlePanMove)
+		canvas.addEventListener('mouseup', handleMouseUp)
+		canvas.addEventListener('mouseleave', handleMouseUp)
+		window.addEventListener('keydown', handleKeyDown)
+		window.addEventListener('keyup', handleKeyUp)
+
+		return (): void => {
+			canvas.removeEventListener('wheel', handleWheel)
+			canvas.removeEventListener('mousedown', handlePanStart)
+			canvas.removeEventListener('mousemove', handlePanMove)
+			canvas.removeEventListener('mouseup', handleMouseUp)
+			canvas.removeEventListener('mouseleave', handleMouseUp)
+			window.removeEventListener('keydown', handleKeyDown)
+			window.removeEventListener('keyup', handleKeyUp)
+		}
+	}, [canvasRef, scale, isPanning, isSpacePressed])
 
 	return { canvasRef, gridCanvasRef, redo, undo, exportCanvas }
 }

@@ -33,6 +33,13 @@ const config: Config = {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)',
 			},
+			boxShadow: {
+				sm: '1px 1px 2px 0 #0000005c',
+				md: '3px 3px 6px 0 #0000005c',
+				lg: '5px 5px 10px 0 #0000005c',
+				xl: '7px 7px 14px 0 #0000005c',
+				'2xl': '9px 9px 18px 0 #0000005c',
+			},
 		},
 	},
 }

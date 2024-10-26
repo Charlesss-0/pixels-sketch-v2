@@ -1,5 +1,5 @@
 import { Button } from './button'
-import { twMerge } from '@/utils/tw-merge'
+import { twMerge } from '@/utils'
 import { useAppStore } from '@/stores'
 import { useMemo } from 'react'
 
