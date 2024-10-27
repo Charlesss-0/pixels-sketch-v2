@@ -5,11 +5,11 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { twMerge } from '@/utils'
 
 const buttonVariants = cva(
-	'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+	'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm text-light-900 font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
 	{
 		variants: {
 			variant: {
-				default: 'bg-dark-900 text-light-900 hover:bg-dark-900/80 border border-neutral-600 w-full',
+				default: 'bg-dark-900 hover:bg-dark-900/80 border border-neutral-600 w-full',
 				secondary:
 					'bg-light-900 text-dark-900 hover:bg-light-900/80 w-full border border-neutral-600',
 				destructive: 'bg-red-500 text-neutral-50 shadow-sm hover:bg-red-500/90',

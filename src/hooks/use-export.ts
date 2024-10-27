@@ -8,44 +8,39 @@ export default function useExport(
 } {
 	const { projectName } = useAppStore()
 
+	const getVisibleStrokes = (): {
+		visibleStrokes: Array<{ x: number; y: number; size: number; color: string }>
+	} => {
+		const visibleStrokes = new Map<string, { x: number; y: number; size: number; color: string }>()
+
+		actions.forEach(actionGroup => {
+			actionGroup.forEach(stroke => {
+				const key = `${stroke.x}-${stroke.y}`
+
+				if (stroke.color === 'transparent') {
+					// Remove any strokes at this location if using eraser
+					visibleStrokes.delete(key)
+				} else {
+					// Update or add the stroke if it's a visible color
+					visibleStrokes.set(key, stroke)
+				}
+			})
+		})
+
+		return { visibleStrokes: Array.from(visibleStrokes.values()) }
+	}
+
 	const exportCanvas = (format: 'png' | 'jpeg' | 'svg', previewOnly = false): string | void => {
 		const canvas = canvasRef.current
 		if (!canvas) return
 		const ctx = canvas.getContext('2d')
 		if (!ctx) return
 
-		const getVisibleStrokes = (): Array<{
-			x: number
-			y: number
-			size: number
-			color: string
-		}> => {
-			const visibleStrokes = new Map<
-				string,
-				{ x: number; y: number; size: number; color: string }
-			>()
-
-			actions.forEach(actionGroup => {
-				actionGroup.forEach(stroke => {
-					const key = `${stroke.x}-${stroke.y}`
-					if (stroke.color === 'transparent') {
-						// Remove any strokes at this location if using eraser
-						visibleStrokes.delete(key)
-					} else {
-						// Update or add the stroke if it's a visible color
-						visibleStrokes.set(key, stroke)
-					}
-				})
-			})
-
-			return Array.from(visibleStrokes.values())
-		}
-
 		if (format === 'svg') {
-			const visibleStrokes = getVisibleStrokes()
+			const { visibleStrokes } = getVisibleStrokes()
 
 			const svgData = `
-				<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+				<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}" viewBox="0 0 ${canvas.width} ${canvas.height}">
 					${visibleStrokes
 						.map(
 							stroke => `
