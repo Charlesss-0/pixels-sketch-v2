@@ -35,13 +35,13 @@ export default function Canvas(): React.ReactNode {
 
 	return (
 		<>
-			<canvas ref={canvasRef} width={800} height={800} className="absolute bg-white" />
+			<canvas ref={canvasRef} className="absolute bg-white" width={700} height={700} />
 
 			<canvas
 				ref={gridCanvasRef}
-				width={800}
-				height={800}
 				className="absolute z-10 bg-transparent pointer-events-none"
+				width={700}
+				height={700}
 			/>
 
 			<Button
